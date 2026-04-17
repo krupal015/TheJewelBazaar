@@ -1,0 +1,43 @@
+{
+  "name": "thejewelbazzar",
+  "version": "1.0.0",
+  "description": "An E-commerce platform for buying jwellery",
+  "keywords": [
+    "E-commerce",
+    "jwellery"
+  ],
+  "license": "ISC",
+  "author": "krupal patel",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npm run dev --prefix backend",
+    "start": "npm run start --prefix backend",
+    "lint": "node --check backend/src/index.js",
+    "seed:admin": "node backend/src/scripts/seedAdmin.js",
+    "frontend:dev": "npm run dev --prefix frontend",
+    "frontend:build": "npm run build --prefix frontend",
+    "frontend:preview": "npm run preview --prefix frontend"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "prettier": "3.8.1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cloudinary": "^2.7.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
+    "express": "^5.2.1",
+    "express-rate-limit": "^8.1.0",
+    "express-validator": "^7.3.2",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.3",
+    "mailgen": "^2.0.32",
+    "mongoose": "^9.3.2",
+    "multer": "^2.0.2",
+    "nodemailer": "^8.0.4",
+    "stripe": "^18.5.0"
+  }
+}

@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color: #171717;
+    background: #fcfbf7;
+  }
+
+  * {
+    @apply border-line;
+  }
+
+  html {
+    background: #fcfbf7;
+  }
+
+  body {
+    @apply bg-base font-sans text-pearl antialiased;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #fcfbf7 0%, #f7f3ec 100%);
+  }
+
+  a {
+    @apply transition-colors duration-200;
+  }
+}
+
+@layer components {
+  .container-shell {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .glass-panel {
+    @apply rounded-none border border-black/90 bg-white;
+  }
+}
