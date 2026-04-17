@@ -1,6 +1,28 @@
-import { loadStripe } from "@stripe/stripe-js";
+let razorpayScriptPromise = null;
 
-const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+export const ensureRazorpayCheckoutLoaded = () => {
+  if (typeof window === "undefined") {
+    return Promise.resolve(false);
+  }
 
-export const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
-export const isStripeReady = Boolean(stripeKey);
+  if (window.Razorpay) {
+    return Promise.resolve(true);
+  }
+
+  if (razorpayScriptPromise) {
+    return razorpayScriptPromise;
+  }
+
+  razorpayScriptPromise = new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+
+  return razorpayScriptPromise;
+};
+
+export const isRazorpayReady = () => typeof window !== "undefined" && Boolean(window.Razorpay);

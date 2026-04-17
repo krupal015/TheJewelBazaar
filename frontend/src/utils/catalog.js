@@ -26,20 +26,37 @@ export const CATEGORY_DISPLAY_ORDER = [
 const normalizeCategoryName = (value = "") => String(value).trim().toLowerCase();
 
 export const getConfiguredCategories = (categories = []) =>
-  DEFAULT_CATEGORIES.map((defaultCategory) => {
-    const matchedCategory = categories.find((category) => {
-      const slug = normalizeCategoryName(category?.slug);
-      const name = normalizeCategoryName(category?.name);
-      return slug === defaultCategory.slug || name === defaultCategory.slug;
-    });
+  [
+    ...DEFAULT_CATEGORIES.map((defaultCategory) => {
+      const matchedCategory = categories.find((category) => {
+        const slug = normalizeCategoryName(category?.slug);
+        const name = normalizeCategoryName(category?.name);
+        return slug === defaultCategory.slug || name === defaultCategory.slug;
+      });
 
-    return {
-      _id: matchedCategory?._id || "",
-      name: defaultCategory.name,
-      slug: defaultCategory.slug,
-      value: matchedCategory?._id || defaultCategory.slug,
-    };
-  });
+      return {
+        _id: matchedCategory?._id || "",
+        name: defaultCategory.name,
+        slug: defaultCategory.slug,
+        value: matchedCategory?._id || defaultCategory.slug,
+      };
+    }),
+    ...categories
+      .filter((category) => {
+        const normalizedSlug = normalizeCategoryName(category?.slug);
+        const normalizedName = normalizeCategoryName(category?.name);
+        return !DEFAULT_CATEGORIES.some(
+          (defaultCategory) =>
+            defaultCategory.slug === normalizedSlug || defaultCategory.slug === normalizedName,
+        );
+      })
+      .map((category) => ({
+        _id: category._id || "",
+        name: String(category.name || "").trim().toUpperCase(),
+        slug: category.slug,
+        value: category._id || category.slug,
+      })),
+  ];
 
 export const resolveCategoryValue = (value = "", categories = []) => {
   const normalizedValue = normalizeCategoryName(value);

@@ -208,6 +208,18 @@ export const useAuthStore = create((set, get) => ({
     get().clearSession();
     useCartStore.getState().resetCart();
   },
+  updateProfile: async (payload) => {
+    set({ loading: true, error: "" });
+    try {
+      const user = await authService.updateProfile(payload);
+      set({ user, loading: false, error: "" });
+      return user;
+    } catch (error) {
+      const message = getApiMessage(error, "Unable to update profile");
+      set({ loading: false, error: message });
+      throw new Error(message);
+    }
+  },
   syncGuestCart: async () => {
     const items = readCartStorage();
     if (!items.length) return;

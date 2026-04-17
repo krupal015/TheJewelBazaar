@@ -24,6 +24,8 @@ const schema = z.object({
   featured: z.boolean().optional(),
 });
 
+const ADMIN_PRODUCT_FETCH_LIMIT = 100;
+
 function Products() {
   const products = useProductStore((state) => state.products);
   const categories = useProductStore((state) => state.categories);
@@ -59,7 +61,7 @@ function Products() {
         setMessage("");
         await Promise.all([
           fetchCategories(),
-          fetchProducts({ limit: 20, sortBy: "createdAt", order: "desc" }),
+          fetchProducts({ limit: ADMIN_PRODUCT_FETCH_LIMIT, sortBy: "createdAt", order: "desc" }),
         ]);
       } catch (error) {
         setMessage(getApiMessage(error, "Unable to load products"));
@@ -161,7 +163,7 @@ function Products() {
                 }
               }
 
-              await fetchProducts({ limit: 20, sortBy: "createdAt", order: "desc" });
+              await fetchProducts({ limit: ADMIN_PRODUCT_FETCH_LIMIT, sortBy: "createdAt", order: "desc" });
             } catch (error) {
               setMessage(getApiMessage(error, "Unable to save product"));
             }
@@ -280,7 +282,7 @@ function Products() {
                   onClick={async () => {
                     try {
                       await deleteProduct(product._id);
-                      await fetchProducts({ limit: 20, sortBy: "createdAt", order: "desc" });
+                      await fetchProducts({ limit: ADMIN_PRODUCT_FETCH_LIMIT, sortBy: "createdAt", order: "desc" });
                       setMessage("Product deleted successfully.");
                     } catch (error) {
                       setMessage(getApiMessage(error, "Unable to delete product"));

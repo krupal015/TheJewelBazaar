@@ -12,21 +12,28 @@ const mailGenerator = new Mailgen({
 });
 
 export const sendMail = async ({ to, subject, intro, action, outro }) => {
-  const html = mailGenerator.generate({
+  const mailBody = {
     body: {
       intro,
       action,
       outro,
     },
-  });
+  };
+  const html = mailGenerator.generate(mailBody);
+  const text = mailGenerator.generatePlaintext(mailBody);
 
   const deliveryMode = getEmailDeliveryMode();
+
+  // In debug/dev mode, skip actual email sending — OTP is returned in the API response.
+  if (env.exposeDebugOtp) {
+    return { deliveryMode: deliveryMode === "disabled" ? "debug" : deliveryMode };
+  }
 
   if (deliveryMode === "disabled") {
     throw new ApiError(503, "Email delivery is not configured. Add real SMTP settings in backend/.env.");
   }
 
-  if (deliveryMode === "mailtrap-sandbox" && !env.exposeDebugOtp) {
+  if (deliveryMode === "mailtrap-sandbox") {
     throw new ApiError(
       503,
       "Real OTP email is not configured. The app is still using Mailtrap sandbox in backend/.env, which cannot send OTPs to a real inbox.",
@@ -36,7 +43,9 @@ export const sendMail = async ({ to, subject, intro, action, outro }) => {
   await mailTransporter.sendMail({
     from: env.emailFrom,
     to,
+    replyTo: env.emailFrom,
     subject,
+    text,
     html,
   });
 

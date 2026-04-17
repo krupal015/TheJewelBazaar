@@ -19,7 +19,9 @@ import { USER_ROLES } from "../utils/constants.js";
 const normalizeName = (value) => String(value ?? "").trim();
 const normalizeEmail = (value) => String(value ?? "").trim().toLowerCase();
 const normalizePassword = (value) => String(value ?? "");
-const normalizeOtp = (value) => String(value ?? "").trim();
+const normalizeOtp = (value) => String(value ?? "").replace(/\D/g, "");
+const normalizePhone = (value) => String(value ?? "").trim();
+const normalizeAddress = (value) => String(value ?? "").trim();
 const EMAIL_OTP_EXPIRY_MINUTES = 10;
 
 const hashOtp = (otp) => crypto.createHash("sha256").update(String(otp)).digest("hex");
@@ -42,6 +44,15 @@ const buildOtpPayload = (email, otp) => ({
   ...(shouldExposeDebugOtp() ? { debugOtp: otp } : {}),
 });
 
+const serializeUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone || "",
+  address: user.address || "",
+  role: user.role,
+});
+
 const buildAuthResponse = async (user) => {
   const payload = {
     userId: user._id,
@@ -55,12 +66,7 @@ const buildAuthResponse = async (user) => {
   await user.save({ validateBeforeSave: false });
 
   return {
-    user: {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    },
+    user: serializeUser(user),
     accessToken,
     refreshToken,
   };
@@ -342,5 +348,20 @@ export const resetPassword = asyncHandler(async (req, res) => {
 });
 
 export const getProfile = asyncHandler(async (req, res) => {
-  res.status(200).json(new ApiResponse("Profile fetched successfully", req.user));
+  res.status(200).json(new ApiResponse("Profile fetched successfully", serializeUser(req.user)));
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  user.name = normalizeName(req.body.name) || user.name;
+  user.phone = normalizePhone(req.body.phone) || "";
+  user.address = normalizeAddress(req.body.address) || "";
+  await user.save();
+
+  res.status(200).json(new ApiResponse("Profile updated successfully", serializeUser(user)));
 });

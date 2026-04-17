@@ -13,9 +13,13 @@ function Home() {
   const categories = useProductStore((state) => state.categories);
   const fetchProducts = useProductStore((state) => state.fetchProducts);
   const fetchCategories = useProductStore((state) => state.fetchCategories);
+  const searchQuery = useMemo(
+    () => new URLSearchParams(location.search).get("search")?.trim() || "",
+    [location.search],
+  );
   const [filters, setFilters] = useState({
     page: 1,
-    limit: 10,
+    limit: 50,
     sortBy: "createdAt",
     order: "desc",
     maxPrice: "",
@@ -32,9 +36,10 @@ function Home() {
       order: filters.order,
     };
     if (filters.maxPrice) params.maxPrice = filters.maxPrice;
+    if (searchQuery) params.search = searchQuery;
     fetchProducts(params);
     fetchCategories();
-  }, [fetchProducts, fetchCategories, filters]);
+  }, [fetchProducts, fetchCategories, filters, searchQuery]);
 
   useEffect(() => {
     const targetId = location.state?.scrollTo || (location.state?.focusCatalog ? "catalog-section" : "");
@@ -59,15 +64,14 @@ function Home() {
           || String(product.metalType || "").trim().toLowerCase() === materialFilter;
 
         return matchesCategory && matchesMaterial;
-      })
-      .slice(0, 8);
+      });
   }, [categoryFilter, materialFilter, products]);
   const updates = useMemo(() => products.slice(6, 9), [products]);
   const clearCollectionFilters = () => {
     setMaterialFilter("");
     setFilters({
       page: 1,
-      limit: 10,
+      limit: 50,
       sortBy: "createdAt",
       order: "desc",
       maxPrice: "",
@@ -88,7 +92,9 @@ function Home() {
                 <h2 className="mt-3 font-display text-5xl leading-none md:text-6xl">Curated for modern heirloom energy.</h2>
               </div>
               <p className="max-w-xl text-sm leading-7 text-smoke md:text-base">
-                A softer catalogue rail with boutique-inspired filters, rounded cards, and cleaner browsing rhythm.
+                {searchQuery
+                  ? `Showing results for "${searchQuery}" with your current collection filters.`
+                  : "A softer catalogue rail with boutique-inspired filters, rounded cards, and cleaner browsing rhythm."}
               </p>
             </div>
 

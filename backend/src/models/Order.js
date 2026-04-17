@@ -79,10 +79,22 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["stripe"],
-      default: "stripe",
+      enum: ["stripe", "razorpay"],
+      default: "razorpay",
     },
     paymentIntentId: {
+      type: String,
+      default: null,
+    },
+    paymentOrderId: {
+      type: String,
+      default: null,
+    },
+    paymentId: {
+      type: String,
+      default: null,
+    },
+    paymentSignature: {
       type: String,
       default: null,
     },

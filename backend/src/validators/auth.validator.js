@@ -2,6 +2,8 @@ import { body } from "express-validator";
 
 const toRequiredText = (value) => (value === undefined || value === null ? "" : String(value).trim());
 const toPasswordText = (value) => (value === undefined || value === null ? "" : String(value));
+const toOtpText = (value) => String(value ?? "").replace(/\D/g, "");
+const toOptionalText = (value) => String(value ?? "").trim();
 
 export const registerValidator = [
   body("name").customSanitizer(toRequiredText).notEmpty().withMessage("Name is required"),
@@ -36,7 +38,7 @@ export const verifyOtpValidator = [
     .isEmail()
     .withMessage("A valid email is required"),
   body("otp")
-    .customSanitizer(toRequiredText)
+    .customSanitizer(toOtpText)
     .isLength({ min: 6, max: 6 })
     .withMessage("OTP must be 6 digits")
     .isNumeric()
@@ -58,7 +60,7 @@ export const resetPasswordOtpValidator = [
     .isEmail()
     .withMessage("A valid email is required"),
   body("otp")
-    .customSanitizer(toRequiredText)
+    .customSanitizer(toOtpText)
     .isLength({ min: 6, max: 6 })
     .withMessage("OTP must be 6 digits")
     .isNumeric()
@@ -74,4 +76,21 @@ export const resetPasswordValidator = [
     .customSanitizer(toPasswordText)
     .isLength({ min: 8 })
     .withMessage("Password must be at least 8 characters long"),
+];
+
+export const profileUpdateValidator = [
+  body("name")
+    .customSanitizer(toRequiredText)
+    .notEmpty()
+    .withMessage("Name is required"),
+  body("phone")
+    .optional()
+    .customSanitizer(toOptionalText)
+    .isLength({ max: 20 })
+    .withMessage("Mobile number must be 20 characters or fewer"),
+  body("address")
+    .optional()
+    .customSanitizer(toOptionalText)
+    .isLength({ max: 250 })
+    .withMessage("Address must be 250 characters or fewer"),
 ];

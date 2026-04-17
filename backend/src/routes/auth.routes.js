@@ -9,6 +9,7 @@ import {
   resendForgotPasswordOtp,
   resendRegistrationOtp,
   resetPassword,
+  updateProfile,
   verifyForgotPasswordOtp,
   verifyRegistrationOtp,
 } from "../controllers/auth.controller.js";
@@ -17,6 +18,7 @@ import { validate } from "../middlewares/validate.middleware.js";
 import {
   forgotPasswordValidator,
   loginValidator,
+  profileUpdateValidator,
   registerValidator,
   resetPasswordOtpValidator,
   resendRegistrationOtpValidator,
@@ -37,5 +39,6 @@ router.post("/forgot-password/verify-otp", validate(verifyOtpValidator), verifyF
 router.post("/forgot-password/resend-otp", validate(forgotPasswordValidator), resendForgotPasswordOtp);
 router.post("/forgot-password/reset", validate(resetPasswordOtpValidator), resetPassword);
 router.get("/me", authenticate, getProfile);
+router.patch("/me", authenticate, validate(profileUpdateValidator), updateProfile);
 
 export default router;

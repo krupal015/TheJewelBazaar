@@ -12,6 +12,16 @@ dotenv.config({
   override: true,
 });
 
+const readEnvText = (value) => String(value ?? "").trim();
+
+const smtpHost = readEnvText(process.env.SMTP_HOST);
+const smtpUser = readEnvText(process.env.SMTP_USER);
+const normalizedSmtpPass = /gmail\.com$/i.test(smtpHost)
+  ? String(process.env.SMTP_PASS ?? "").replace(/\s+/g, "")
+  : readEnvText(process.env.SMTP_PASS);
+const clientUrl = readEnvText(process.env.CLIENT_URL);
+const emailFrom = readEnvText(process.env.EMAIL_FROM) || smtpUser || "noreply@thejewelbazzar.com";
+
 const requiredVariables = [
   "PORT",
   "MONGODB_URI",
@@ -25,7 +35,8 @@ const requiredVariables = [
   "SMTP_PORT",
   "SMTP_USER",
   "SMTP_PASS",
-  "STRIPE_SECRET_KEY",
+  "RAZORPAY_KEY_ID",
+  "RAZORPAY_KEY_SECRET",
   "CLOUDINARY_CLOUD_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
@@ -43,25 +54,27 @@ export const env = {
   nodeEnv: process.env.NODE_ENV || "development",
   port: Number(process.env.PORT || 5000),
   mongodbUri: process.env.MONGODB_URI || "",
-  corsOrigin: process.env.CLIENT_URL || "http://localhost:5173",
+  corsOrigin: clientUrl || "http://localhost:5173",
   jwtAccessSecret: process.env.JWT_ACCESS_SECRET || "access-secret",
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || "refresh-secret",
   jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN || "15m",
   jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
-  emailFrom: process.env.EMAIL_FROM || "noreply@thejewelbazzar.com",
-  smtpHost: process.env.SMTP_HOST || "",
+  emailFrom,
+  smtpHost,
   smtpPort: Number(process.env.SMTP_PORT || 587),
   smtpSecure: String(process.env.SMTP_SECURE || "false") === "true",
-  smtpUser: process.env.SMTP_USER || "",
-  smtpPass: process.env.SMTP_PASS || "",
-  clientUrl: process.env.CLIENT_URL || "http://localhost:5173",
+  smtpUser,
+  smtpPass: normalizedSmtpPass,
+  clientUrl: clientUrl || "http://localhost:5173",
   stripeSecretKey: process.env.STRIPE_SECRET_KEY || "",
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET || "",
+  razorpayKeyId: readEnvText(process.env.RAZORPAY_KEY_ID),
+  razorpayKeySecret: readEnvText(process.env.RAZORPAY_KEY_SECRET),
   cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME || "",
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY || "",
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || "",
   adminName: process.env.ADMIN_NAME || "Admin",
   adminEmail: process.env.ADMIN_EMAIL || "admin@thejewelbazzar.com",
   adminPassword: process.env.ADMIN_PASSWORD || "ChangeMe123!",
-  exposeDebugOtp: String(process.env.EXPOSE_DEBUG_OTP || "false").toLowerCase() === "true",
+  exposeDebugOtp: readEnvText(process.env.EXPOSE_DEBUG_OTP || "false").toLowerCase() === "true",
 };

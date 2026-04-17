@@ -5,8 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import Button from "../components/common/Button";
 import Input from "../components/common/Input";
-import { isStripeReady } from "../services/paymentService";
-import { useCartStore, useOrderStore } from "../store/store";
+import { ensureRazorpayCheckoutLoaded } from "../services/paymentService";
+import { useAuthStore, useCartStore, useOrderStore } from "../store/store";
 import { formatCurrency, getApiMessage } from "../utils/helpers";
 
 const schema = z.object({
@@ -22,6 +22,7 @@ const schema = z.object({
 
 function Checkout() {
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
   const items = useCartStore((state) => state.items);
   const cartSummary = useCartStore((state) => state.cartSummary);
   const totals = cartSummary();
@@ -31,11 +32,11 @@ function Checkout() {
   const [submitting, setSubmitting] = useState(false);
   const [paymentState, setPaymentState] = useState(null);
   const [error, setError] = useState("");
-  const { register, handleSubmit, formState } = useForm({
+  const { register, handleSubmit, formState, getValues } = useForm({
     resolver: zodResolver(schema),
     defaultValues: {
-      fullName: "",
-      phone: "",
+      fullName: user?.name || "",
+      phone: user?.phone || "",
       line1: "",
       line2: "",
       city: "",
@@ -56,6 +57,61 @@ function Checkout() {
     );
   }
 
+  const launchRazorpayCheckout = async (paymentPayload, shippingValues) => {
+    const loaded = await ensureRazorpayCheckoutLoaded();
+
+    if (!loaded || !window.Razorpay) {
+      throw new Error("Razorpay checkout could not be loaded. Please try again.");
+    }
+
+    const options = {
+      key: paymentPayload.payment.keyId,
+      amount: paymentPayload.payment.amount,
+      currency: paymentPayload.payment.currency,
+      name: "The Jewel Bazzar",
+      description: `Order ${paymentPayload.order._id}`,
+      order_id: paymentPayload.payment.orderId,
+      prefill: {
+        name: shippingValues.fullName,
+        email: user?.email || "",
+        contact: shippingValues.phone,
+      },
+      notes: {
+        appOrderId: paymentPayload.order._id,
+      },
+      theme: {
+        color: "#b7791f",
+      },
+      handler: async (response) => {
+        setSubmitting(true);
+        setError("");
+
+        try {
+          await verifyPayment(paymentPayload.order._id, {
+            razorpayOrderId: response.razorpay_order_id,
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpaySignature: response.razorpay_signature,
+          });
+          resetCart();
+          navigate(`/tracking/${paymentPayload.order._id}`);
+        } catch (err) {
+          setError(getApiMessage(err, "Payment verification failed"));
+        } finally {
+          setSubmitting(false);
+        }
+      },
+      modal: {
+        ondismiss: () => {
+          setSubmitting(false);
+          setError("Payment was cancelled. You can try again from the order card below.");
+        },
+      },
+    };
+
+    const checkout = new window.Razorpay(options);
+    checkout.open();
+  };
+
   return (
     <section className="container-shell py-12">
       <div className="grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -63,8 +119,8 @@ function Checkout() {
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold">Checkout</p>
           <h1 className="mt-4 font-display text-4xl">Shipping and payment</h1>
           <p className="mt-4 text-sm leading-7 text-smoke">
-            This flow is connected to your backend order creation endpoint. If you add your Stripe publishable key,
-            the same page is ready for live payment UI.
+            This checkout is wired for Razorpay. Add your Razorpay keys in the backend env, then this page will create
+            an order and open the Razorpay payment modal.
           </p>
 
           <form
@@ -75,9 +131,9 @@ function Checkout() {
               try {
                 const response = await createOrder({ shippingAddress: values });
                 setPaymentState(response);
+                await launchRazorpayCheckout(response, values);
               } catch (err) {
                 setError(getApiMessage(err, "Unable to create order"));
-              } finally {
                 setSubmitting(false);
               }
             })}
@@ -105,7 +161,7 @@ function Checkout() {
 
             <div className="sm:col-span-2 flex flex-wrap gap-4">
               <Button type="submit" disabled={submitting}>
-                {submitting ? "Creating order..." : "Create order"}
+                {submitting ? "Preparing payment..." : "Pay with Razorpay"}
               </Button>
 
               {paymentState ? (
@@ -115,19 +171,14 @@ function Checkout() {
                   onClick={async () => {
                     setSubmitting(true);
                     try {
-                      await verifyPayment(paymentState.order._id, {
-                        paymentIntentId: paymentState.payment.paymentIntentId,
-                      });
-                      resetCart();
-                      navigate(`/tracking/${paymentState.order._id}`);
+                      await launchRazorpayCheckout(paymentState, getValues());
                     } catch (err) {
-                      setError(getApiMessage(err, "Payment verification failed"));
-                    } finally {
+                      setError(getApiMessage(err, "Unable to start Razorpay checkout"));
                       setSubmitting(false);
                     }
                   }}
                 >
-                  Verify payment
+                  Retry Razorpay payment
                 </Button>
               ) : null}
             </div>
@@ -136,11 +187,10 @@ function Checkout() {
           {paymentState ? (
             <div className="mt-8 rounded-[28px] border border-gold/30 bg-gold/10 p-5 text-sm text-smoke">
               <p className="font-semibold text-pearl">Order created: {paymentState.order._id}</p>
-              <p className="mt-2">Payment intent: {paymentState.payment.paymentIntentId}</p>
+              <p className="mt-2">Razorpay order: {paymentState.payment.orderId}</p>
               <p className="mt-3">
-                {isStripeReady
-                  ? "Stripe key detected. You can now enhance this section with Elements for card capture."
-                  : "Add `VITE_STRIPE_PUBLISHABLE_KEY` to enable live card collection. The backend payment flow is already wired."}
+                Add `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` in `backend/.env`, restart the backend, and this checkout
+                will open the live Razorpay payment window.
               </p>
             </div>
           ) : null}

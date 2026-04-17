@@ -28,6 +28,7 @@ function Register() {
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState("details");
   const [infoMessage, setInfoMessage] = useState("");
+  const normalizeOtpInput = (value) => String(value ?? "").replace(/\D/g, "").slice(0, 6);
   const formatOtpMessage = (response, fallback) => {
     const parts = [response?.message || fallback, response?.deliveryNotice];
 
@@ -76,7 +77,7 @@ function Register() {
                 try {
                   setInfoMessage("");
                   const response = await startRegistration(values);
-                  setVerificationEmail(values.email.trim().toLowerCase());
+                  setVerificationEmail(response?.email || values.email.trim().toLowerCase());
                   setOtp("");
                   setStep("verify");
                   setInfoMessage(formatOtpMessage(response, "Verification OTP sent successfully."));
@@ -123,7 +124,10 @@ function Register() {
                 label="Verification OTP"
                 placeholder="Enter 6-digit OTP"
                 value={otp}
-                onChange={(event) => setOtp(event.target.value)}
+                inputMode="numeric"
+                autoComplete="one-time-code"
+                maxLength={6}
+                onChange={(event) => setOtp(normalizeOtpInput(event.target.value))}
               />
 
               {error ? <p className="border border-black bg-panel px-4 py-3 text-sm">{error}</p> : null}
@@ -177,6 +181,7 @@ function Register() {
                   disabled={loading}
                   onClick={() => {
                     setStep("details");
+                    setVerificationEmail("");
                     setOtp("");
                     setInfoMessage("");
                     resetError();

@@ -23,5 +23,7 @@ export const updateOrderStatusValidator = [
 
 export const verifyPaymentValidator = [
   param("orderId").isMongoId().withMessage("Valid order id is required"),
-  body("paymentIntentId").trim().notEmpty().withMessage("Payment intent id is required"),
+  body("razorpayOrderId").trim().notEmpty().withMessage("Razorpay order id is required"),
+  body("razorpayPaymentId").trim().notEmpty().withMessage("Razorpay payment id is required"),
+  body("razorpaySignature").trim().notEmpty().withMessage("Razorpay payment signature is required"),
 ];
