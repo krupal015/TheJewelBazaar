@@ -11,8 +11,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "npm run dev --prefix backend",
-    "start": "npm run start --prefix backend",
+    "dev": "nodemon backend/src/index.js",
+    "start": "node backend/src/index.js",
     "lint": "node --check backend/src/index.js",
     "seed:admin": "node backend/src/scripts/seedAdmin.js",
     "frontend:dev": "npm run dev --prefix frontend",
