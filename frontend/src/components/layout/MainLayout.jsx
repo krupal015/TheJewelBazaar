@@ -33,7 +33,7 @@ function MainLayout() {
   const navLinks = [
     { label: "Home", type: "route", to: "/" },
     { label: "Collections", type: "section", sectionId: "catalog-section" },
-    { label: "About Us", type: "section", sectionId: "about-section" },
+    { label: "About Us", type: "route", to: "/about" },
     { label: "Orders", type: "route", to: "/orders" },
   ];
 
@@ -365,7 +365,7 @@ function MainLayout() {
                   onClick={() => navigate("/login")}
                   className="rounded-full border border-black/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-black transition-colors hover:bg-white"
                 >
-                  Login / Register
+                  Sign In
                 </button>
               )}
             </div>
@@ -449,7 +449,7 @@ function MainLayout() {
                       onClick={() => handleRouteClick("/login")}
                       className="rounded-full border border-black/15 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-black"
                     >
-                      Login / Register
+                      Sign In
                     </button>
                   )}
                 </div>

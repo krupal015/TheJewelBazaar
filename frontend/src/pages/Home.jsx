@@ -195,8 +195,16 @@ function Home() {
             <h2 className="mt-4 font-display text-5xl leading-none">Designed for modern jewellery shopping.</h2>
           </div>
           <div className="p-8 text-sm leading-8 text-smoke md:text-base">
-            The Jewel Bazzar brings bridal classics, daily-wear pieces, and signature collections into one refined
-            space. We focus on a simple shopping journey, clear product details, and a premium storefront experience.
+            <p>
+              The Jewel Bazzar brings bridal classics, daily-wear pieces, and signature collections into one refined
+              space. We focus on a simple shopping journey, clear product details, and a premium storefront experience.
+            </p>
+            <Link
+              to="/about"
+              className="mt-6 inline-flex items-center rounded-full border border-black px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black transition-colors hover:bg-panel"
+            >
+              Read Our Story
+            </Link>
           </div>
         </div>
       </section>
@@ -204,9 +212,6 @@ function Home() {
       <section className="container-shell py-14">
         <div className="mb-8 flex items-center justify-between border-b border-black pb-4">
           <h2 className="font-display text-5xl">Journal</h2>
-          <Link to="/tracking" className="text-sm font-semibold uppercase tracking-[0.14em] text-smoke hover:text-black">
-            View tracking
-          </Link>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">

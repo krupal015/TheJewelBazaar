@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import AdminLayout from "../components/layout/AdminLayout";
 import MainLayout from "../components/layout/MainLayout";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
+import About from "../pages/About";
 import Cart from "../pages/Cart";
 import Checkout from "../pages/Checkout";
 import ForgotPassword from "../pages/ForgotPassword";
@@ -22,6 +23,7 @@ function AppRoutes() {
     <Routes>
       <Route element={<MainLayout />}>
         <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />

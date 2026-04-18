@@ -1,4 +1,4 @@
-import { ArrowUpRight, Heart, ShoppingBag, Star } from "lucide-react";
+import { ArrowUpRight, Heart, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 import Button from "../common/Button";
 import { cn, formatCurrency, placeholderImage } from "../../utils/helpers";
@@ -35,15 +35,9 @@ function ProductCard({ product, variant = "default" }) {
 
         <div className="flex min-h-[190px] flex-col justify-between px-1 pb-1 pt-5">
           <div>
-            <div className="flex items-start justify-between gap-3">
-              <Link to={`/products/${product._id}`} className="line-clamp-1 font-display text-[2.15rem] leading-none text-black">
-                {product.name}
-              </Link>
-              <p className="mt-2 flex shrink-0 items-center gap-1 text-[11px] uppercase tracking-[0.16em] text-smoke">
-                <Star size={12} className="stroke-[1.8]" />
-                No ratings yet
-              </p>
-            </div>
+            <Link to={`/products/${product._id}`} className="line-clamp-1 font-display text-[2.15rem] leading-none text-black">
+              {product.name}
+            </Link>
 
             <p className="mt-3 line-clamp-2 text-sm leading-6 text-smoke">
               {product.description}
@@ -65,7 +59,7 @@ function ProductCard({ product, variant = "default" }) {
             <button
               type="button"
               onClick={() => addItem(product, 1)}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-black/12 px-5 py-3 text-sm font-semibold uppercase tracking-[0.22em] text-black transition-colors duration-200 hover:bg-black hover:text-white"
+              className="inline-flex flex-1 flex-nowrap items-center justify-center gap-2 whitespace-nowrap rounded-full border border-black/12 px-5 py-3 text-sm font-semibold uppercase tracking-[0.22em] text-black transition-colors duration-200 hover:bg-black hover:text-white"
             >
               <ShoppingBag size={16} />
               Add To Cart
@@ -122,8 +116,8 @@ function ProductCard({ product, variant = "default" }) {
             )}
           </div>
           <Button className="mt-4 w-full gap-2" onClick={() => addItem(product, 1)}>
-            <ShoppingBag size={16} />
-            Add to cart
+            <ShoppingBag size={16} className="shrink-0" />
+            <span className="whitespace-nowrap">Add to cart</span>
           </Button>
         </div>
       </div>

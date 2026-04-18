@@ -77,12 +77,6 @@ export default function Slider() {
                     >
                       Shop Now
                     </Link>
-                    <Link
-                      to="/tracking"
-                      className="inline-flex items-center border border-black px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black transition-colors hover:bg-white/80"
-                    >
-                      Track Order
-                    </Link>
                   </div>
                 </div>
               </div>

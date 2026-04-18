@@ -81,9 +81,9 @@ function Login() {
             {passwordResetSuccess ? <p className="border border-black bg-white px-4 py-3 text-sm">{passwordResetSuccess}</p> : null}
 
             <div className="flex flex-wrap gap-4">
-              <Button type="submit" disabled={loading} className="gap-2">
+              <Button type="submit" disabled={loading} className="gap-2 !rounded-full px-7 whitespace-nowrap">
                 <Mail size={16} />
-                {loading ? "Signing in..." : "Login"}
+                {loading ? "Signing in..." : "Sign In"}
               </Button>
             </div>
           </form>

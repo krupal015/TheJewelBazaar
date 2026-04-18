@@ -12,7 +12,7 @@ function Button({ className, variant = "primary", ...props }) {
     <button
       className={cn(
         "inline-flex items-center justify-center rounded-none px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] transition duration-200",
-        "disabled:cursor-not-allowed disabled:opacity-60",
+        "disabled:cursor-not-allowed disabled:opacity-60 border-rounded",
         variants[variant],
         className,
       )}

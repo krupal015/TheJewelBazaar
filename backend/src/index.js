@@ -11,7 +11,7 @@ const bootstrap = async () => {
   await verifyMailTransport();
 
   app.listen(env.port, () => {
-    console.log(`Server running on http://localhost:${env.port}`);
+    console.log(`Server running on http://thejewelbazaar.vercel.app `);
   });
 };
 

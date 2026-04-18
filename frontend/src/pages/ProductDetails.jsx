@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronRight, Heart, ShoppingBag } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, ShoppingBag, Star } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import Button from "../components/common/Button";
@@ -90,6 +90,20 @@ function ProductDetails() {
             ) : null}
           </div>
 
+          <div className="mt-6 rounded-[24px] border border-white/10 bg-white/5 p-5">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 text-gold">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Star key={index} size={15} className="fill-current" />
+                ))}
+              </div>
+              <span className="text-sm font-semibold text-pearl">Ratings & Reviews</span>
+            </div>
+            <p className="mt-3 text-sm leading-7 text-smoke">
+              No reviews yet for this piece. Ratings will appear here once customers start sharing their feedback.
+            </p>
+          </div>
+
           <div className="mt-8 grid gap-4 rounded-[28px] border border-white/10 bg-white/5 p-5 sm:grid-cols-3">
             <div>
               <p className="text-xs uppercase tracking-[0.25em] text-smoke">Metal</p>
@@ -106,11 +120,11 @@ function ProductDetails() {
           </div>
 
           <div className="mt-8 flex flex-wrap gap-4">
-            <Button className="gap-2" onClick={() => addItem(selectedProduct, 1)}>
-              <ShoppingBag size={16} />
-              Add to cart
+            <Button className="gap-2 rounded-full whitespace-nowrap" onClick={() => addItem(selectedProduct, 1)}>
+              <ShoppingBag size={16} className="shrink-0" />
+              <span className="whitespace-nowrap">Add to cart</span>
             </Button>
-            <Button variant="secondary" className="gap-2" onClick={() => toggleWishlist(selectedProduct)}>
+            <Button variant="secondary" className="gap-2 rounded-full whitespace-nowrap" onClick={() => toggleWishlist(selectedProduct)}>
               <Heart size={16} fill={wishlisted ? "currentColor" : "none"} />
               {wishlisted ? "Remove Wishlist" : "Add Wishlist"}
             </Button>

@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useOrderStore } from "../store/store";
 import { formatCurrency } from "../utils/helpers";
 
@@ -16,7 +15,7 @@ function Orders() {
     <section className="container-shell py-12">
       <div className="mb-10">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold">Order History</p>
-        <h1 className="mt-4 font-display text-4xl">Your purchases and tracking</h1>
+        <h1 className="mt-4 font-display text-4xl">Your purchases</h1>
       </div>
 
       {loading ? (
@@ -37,12 +36,6 @@ function Orders() {
                   <span className="rounded-full border border-gold/30 bg-gold/10 px-4 py-2 text-sm font-semibold text-gold">
                     {order.orderStatus}
                   </span>
-                  <Link
-                    to={`/tracking/${order._id}`}
-                    className="inline-flex rounded-full border border-gold/30 px-4 py-2 text-sm font-semibold text-gold"
-                  >
-                    Track order
-                  </Link>
                 </div>
               </div>
             </div>
