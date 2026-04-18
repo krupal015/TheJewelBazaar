@@ -188,26 +188,6 @@ function Home() {
         </div>
       </section>
 
-      <section id="about-section" className="container-shell py-8">
-        <div className="grid border border-black bg-white lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="border-b border-black p-8 lg:border-b-0 lg:border-r">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-smoke">About Us</p>
-            <h2 className="mt-4 font-display text-5xl leading-none">Designed for modern jewellery shopping.</h2>
-          </div>
-          <div className="p-8 text-sm leading-8 text-smoke md:text-base">
-            <p>
-              The Jewel Bazzar brings bridal classics, daily-wear pieces, and signature collections into one refined
-              space. We focus on a simple shopping journey, clear product details, and a premium storefront experience.
-            </p>
-            <Link
-              to="/about"
-              className="mt-6 inline-flex items-center rounded-full border border-black px-5 py-3 text-sm font-semibold uppercase tracking-[0.18em] text-black transition-colors hover:bg-panel"
-            >
-              Read Our Story
-            </Link>
-          </div>
-        </div>
-      </section>
 
       <section className="container-shell py-14">
         <div className="mb-8 flex items-center justify-between border-b border-black pb-4">
